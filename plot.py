@@ -5,6 +5,7 @@ For plotting SpEC runs
 import os
 import matplotlib.pyplot as mpl
 from parsing import parseRunDirNames
+from specRunClass import datFile
 
 
 mpl.rc('text', usetex=True)
@@ -26,6 +27,8 @@ os.chdir(runsDirectory)
 
 listOfRunDicts = parseRunDirNames(runSequenceName)
 
+
+datFile('tovOctSym-full-sL1fDX300pd0.85/Lev0/Run/Constraints/GhCe.dat')
 
 print listOfRunDicts
 
