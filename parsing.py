@@ -2,6 +2,7 @@
 Functions and utilities for parsing spec runs
 """
 import glob
+import os
 
 
 def parseRunDirNames(runBaseName):
@@ -9,10 +10,13 @@ def parseRunDirNames(runBaseName):
     
     dirList = glob.glob(runBaseName + "*")
 
-    print dirList
+    #print dirList
 
     for thisDir in dirList:
-        listOfRunDicts.append(runDictFromDirName(thisDir))
+
+        runDict = runDictFromDirName(thisDir)
+        locateRunPortions(runDict)
+        listOfRunDicts.append(runDict)
     
     return listOfRunDicts
 
@@ -38,5 +42,27 @@ def runDictFromDirName(dirName):
     resolutionAndDepletion = resolutionAndDepletion[1].split('pd')
     runDict['hydroDx'] = float(resolutionAndDepletion[0])
     runDict['depletion'] = float(resolutionAndDepletion[1])
+
+    return runDict
+
+def locateRunPortions(runDict):
+    """
+    Searches directory of runDict for collapse & ringdown segments and adds information to runDict
+    """
+
+    segments = glob.glob(runDict['directory'] + '/*')
+    assert segments, "Omg no run segments found in: %s" % runDict['directory']
+
+    for segment in segments:
+        if 'Ringdown' in segment:
+            runDirectory = glob.glob(segment + '/Lev?/Run/')
+            assert runDirectory, "No run directory found in Ringdown"
+            assert len(runDirectory) < 2, "More than one run directory found in Ringdown!"
+            runDict['ringdown'] = runDirectory[0]
+        else:
+            runDirectory = segment + '/Run/'
+            assert os.path.exists(runDirectory), \
+                "Run directory does not exist in collapse: %s" % runDirectory
+            runDict['collapse'] = runDirectory
 
     return runDict

@@ -3,19 +3,17 @@ For plotting SpEC runs
 """
 #import matplotlib
 import os
-import matplotlib.pyplot as mpl
+import matplotlib.pyplot as plt
+import numpy
 from parsing import parseRunDirNames
-from specRunClass import datFile
+from specRunClass import datFile, simulation
 import h5py
+import plot_defaults
 
-mpl.rc('text', usetex=True)
-mpl.rc('font', family='serif')
-font = {'size': 24}
-mpl.rc('font', **font)
-mpl.rc('axes', labelsize='large')
+
 
 runsDirectory = "/home/jeff/work/specRuns"
-runSequenceName = "tovOctSym"
+runSequenceName = "gam2TOV"
 
 
 startingDirectory = os.getcwd()
@@ -25,18 +23,39 @@ startingDirectory = os.getcwd()
 ##############################################################################
 os.chdir(runsDirectory)
 
-listOfRunDicts = parseRunDirNames(runSequenceName)
 
+gam2TOV = simulation('gam2TOV')
 
-datFile('tovOctSym-full-sL1fDX300pd0.85/Lev0/Run/Constraints/GhCe.dat')
+lengths = []
 
-print listOfRunDicts
+##############################################
+#Density convergence
+##############################################
+for i, run in enumerate(gam2TOV.listOfRunDicts):
 
-h5file = h5py.File('tovOctSym-full-sL1fDX300pd0.85/Lev0/Run/WaveExt/WaveExtraction.h5', 'r')
+    #print gam2TOV.runData['DensestPoint.dat'][i]['time']
+    lengths.append( len(gam2TOV.runData['DensestPoint.dat'][i]['time']) )
+#    plt.semilogy(gam2TOV.runData['DensestPoint.dat'][i]['time'],
+#                 gam2TOV.runData['DensestPoint.dat'][i]['Rho0Phys'] )
+# end = min(lengths )
+# plt.semilogy(gam2TOV.runData['DensestPoint.dat'][i]['time'][1:end],
+#              numpy.abs( gam2TOV.runData['DensestPoint.dat'][0]['Rho0Phys'][1:end]
+#              - gam2TOV.runData['DensestPoint.dat'][1]['Rho0Phys'][1:end]  ))
+# plt.semilogy(gam2TOV.runData['DensestPoint.dat'][i]['time'][1:end],
+#              numpy.abs( gam2TOV.runData['DensestPoint.dat'][0]['Rho0Phys'][1:end]
+#              - gam2TOV.runData['DensestPoint.dat'][1]['Rho0Phys'][1:end]  ))
+# plt.semilogy(gam2TOV.runData['DensestPoint.dat'][i]['time'][1:end],
+#              numpy.abs( gam2TOV.runData['DensestPoint.dat'][0]['Rho0Phys'][1:end]
+#              - gam2TOV.runData['DensestPoint.dat'][2]['Rho0Phys'][1:end]  ))
+# plt.show()
 
+##############################################
+# Waves
+##############################################
 
-dset = h5file.get('rPsi4')
+for i, run in enumerate(gam2TOV.listOfRunDicts):
 
+    print gam2TOV.wavesList[i]
 
 
 
