@@ -21,7 +21,8 @@ class simulation(object):
 #                    '/Constraints/GhCeLinf.dat',
                     'DensestPoint.dat',
                     'MinMaxOfSqrtDetg.dat',
-                    'MinLapse.dat')
+                    'MinLapse.dat',
+                    'RestMass.dat')
     wavesList = None
     def __init__(self,runsBase):
         assert isinstance(runsBase, str)
@@ -80,7 +81,7 @@ class datFile(object):
         self.columnHeaders = []
         self.dataTable = []
         self.segmentBoundaries = []
-
+        self.observerName = None
         self.parse(filename)
 
     def __getitem__(self, key):
@@ -94,12 +95,30 @@ class datFile(object):
     def getCols(self):
         return self.columnHeaders
 
+    def hackNoColumnDatfiles(self,filename):
+        """
+        If a dat file in your simulation does not contain headers, define them here
+        Input a filename, checks if dat file is a part of filename, returns column headers list
+        """
+        hackFilesDict= {'RestMass.dat': ['time', 'mass'],
+                        }
+        for key in hackFilesDict.keys():
+            if key in filename:
+                return hackFilesDict[key]
+
+        return []
+
+
+
     #TODO: parse and appendDataFrom file need to be refactored to remove code duplication
     def parse(self, filename):
 
         filehandle = open(filename,'r')
         #print filename
         gotObserverName = False
+
+        #check if a no-column dat file
+        self.columnHeaders = self.hackNoColumnDatfiles(filename)
 
         for i, line in enumerate(filehandle):
             line = line.lstrip()
@@ -136,9 +155,11 @@ class datFile(object):
         filehandle = open(filename,'r')
 
         gotObserverName = False
+        observerName = None
         gotFirstTstep = False
         firstTstep = None
-        columnHeaders=[]
+        #check if a no-column dat file
+        columnHeaders = self.hackNoColumnDatfiles(filename)
         dataTable=[]
 
         for i, line in enumerate(filehandle):
@@ -170,7 +191,7 @@ class datFile(object):
         #print 'fsttstep: ', firstTstep
         self.segmentBoundaries.append(firstTstep)
         dataTable = numpy.array(dataTable)
-
+        print observerName,  self.observerName
         assert columnHeaders == self.columnHeaders, "Appending file doesn't match column headers!"
         assert observerName == self.observerName, "Appending file observer name doesn't match!"
 

@@ -28,7 +28,7 @@ os.chdir(runsDirectory)
 #gam2D2 = simulation('gam2D2')
 #gam2D4 = simulation('gam2D4')
 
-simToPlot = simulation('gam2D4')
+simToPlot = simulation('gam2TOV')
 
 lengths = []
 
@@ -52,7 +52,25 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
 #              numpy.abs( simToPlot.runData['DensestPoint.dat'][0]['Rho0Phys'][1:end]
 #              - simToPlot.runData['DensestPoint.dat'][2]['Rho0Phys'][1:end]  ))
 # plt.show()
+##############################################
+# Baryon mass/symmetry factor convergence
+##############################################
 
+# legendList=[]
+# matplotlib.rcParams['figure.subplot.left'] = 0.18
+# for i, run in enumerate(simToPlot.listOfRunDicts):
+#
+#     if run['grLev'] > 2:
+#         legendList.append('Lev'+str(i)+' - Lev'+ str(i-1))
+#         plt.plot(simToPlot.runData['RestMass.dat'][i]['time'],
+#                  simToPlot.runData['RestMass.dat'][i]['mass']
+#                  -simToPlot.runData['RestMass.dat'][i-1]['mass'] )
+#
+# lg = plt.legend(legendList, loc=2)
+# lg.draw_frame(False)
+# plt.xlabel(r"$time_{(code)}$")
+# plt.ylabel(r"$\delta M_b$")
+# plt.show()
 
 ##############################################
 # lapse
@@ -80,8 +98,10 @@ legendList=[]
 matplotlib.rcParams['figure.subplot.left'] = 0.18
 for i, run in enumerate(simToPlot.listOfRunDicts):
 
-    if run['gauge'] == 'full':
-        legendList.append('GrLev = ' + str(run['grLev']))
+    if True:
+        legendList.append('GrLev = ' + str(run['grLev']) + ',  Gauge = ' + str(run['gauge']))
+    #if run['gauge'] == 'full':
+    #    legendList.append('GrLev = ' + str(run['grLev']))
     #if run['grLev'] == 4:
     #    legendList.append('Gauge = ' + str(run['gauge']))
         plt.semilogy(simToPlot.runData['Constraints/GhCe.dat'][i]['time'],
@@ -151,7 +171,7 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
     #0
     #h5py.Dataset().attrs
     print simToPlot.wavesList[i]['rd'].keys()
-    if run['grLev'] < 3 and run['gauge'] == 'full':
+    if run['grLev'] < 5 and run['gauge'] == 'full':
         legendList.append('GrLev=' + str(run['grLev']))
         plt.plot(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,0],
                  simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,1])
