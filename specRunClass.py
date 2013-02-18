@@ -27,7 +27,7 @@ class simulation(object):
         assert isinstance(runsBase, str)
         
         self.listOfRunDicts = parseRunDirNames(runsBase)
-
+        print self.listOfRunDicts
         #print self.listOfRunDicts
 
         self.ghceL2 = []
@@ -43,20 +43,28 @@ class simulation(object):
                 if 'ringdown' in run:
                     currentDatFile.appendDataFromFile(run['ringdown'] + currentFile)
                 else:
-                    assert False, "NO RINGDOWN FOR %s" % run
-
+                    #assert False, "NO RINGDOWN FOR %s" % run
+                    pass
                 self.runData[currentFile].append(currentDatFile)
                 #print currentDatFile.getCols()
             #Do wave ext separately
-            h5tuple = self.loadWaves(run['collapse'], run['ringdown'])
-            self.wavesList.append(h5tuple )
+            h5dict = None
+            #HACKY NO RINGDOWN HACK TODO:FIX
+            if 'ringdown' in run:
+                h5dict = self.loadWaves(run['collapse'], run['ringdown'])
+            else:
+                h5dict = self.loadWaves(run['collapse'], run['collapse'])
+                del h5dict['rd']
+            self.wavesList.append(h5dict)
 
             #break
     def loadWaves(self, pathCollapse, pathRingdown):
 
         filename = "WaveExt/rPsi4_FiniteRadii_CodeUnits.h5"
-
-        return (h5py.File(pathCollapse + filename, 'r'), h5py.File(pathRingdown + filename, 'r'))
+        assert os.path.exists(pathCollapse + filename)
+        assert os.path.exists(pathRingdown + filename)
+        return {'cl': h5py.File(pathCollapse + filename, 'r'),
+                'rd': h5py.File(pathRingdown + filename, 'r')}
         pass
 
 
@@ -86,6 +94,7 @@ class datFile(object):
     def getCols(self):
         return self.columnHeaders
 
+    #TODO: parse and appendDataFrom file need to be refactored to remove code duplication
     def parse(self, filename):
 
         filehandle = open(filename,'r')

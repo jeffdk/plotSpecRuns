@@ -3,6 +3,7 @@ Functions and utilities for parsing spec runs
 """
 import glob
 import os
+import operator
 
 
 def parseRunDirNames(runBaseName):
@@ -17,8 +18,10 @@ def parseRunDirNames(runBaseName):
         runDict = runDictFromDirName(thisDir)
         locateRunPortions(runDict)
         listOfRunDicts.append(runDict)
-    
-    return listOfRunDicts
+    print listOfRunDicts
+    getlev = operator.itemgetter('grLev')
+    print map(getlev, listOfRunDicts)
+    return sorted(listOfRunDicts, key=getlev)
 
 
 def runDictFromDirName(dirName):
