@@ -109,6 +109,21 @@ class datFile(object):
         return []
 
 
+    def removeDuplicateTimesteps(self, timeColName='time'):
+        """
+        Keeps the first instance of particular timestep.
+        """
+        assert timeColName in self.columnHeaders
+        timeIndex = self.columnHeaders.index(timeColName)
+        rowIndexesToDelete = []
+        for i, entry in enumerate(self.dataTable):
+            ithTime = entry[timeIndex]
+            for j in range(i+1,len(self.dataTable)):
+                if self.dataTable[j][timeIndex] == ithTime:
+                    rowIndexesToDelete.append(j)
+        #print self.dataTable
+        self.dataTable = numpy.delete(self.dataTable, rowIndexesToDelete, 0)
+        #print self.dataTable
 
     #TODO: parse and appendDataFrom file need to be refactored to remove code duplication
     def parse(self, filename):
@@ -191,7 +206,7 @@ class datFile(object):
         #print 'fsttstep: ', firstTstep
         self.segmentBoundaries.append(firstTstep)
         dataTable = numpy.array(dataTable)
-        print observerName,  self.observerName
+        #print observerName,  self.observerName
         assert columnHeaders == self.columnHeaders, "Appending file doesn't match column headers!"
         assert observerName == self.observerName, "Appending file observer name doesn't match!"
 

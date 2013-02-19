@@ -4,34 +4,23 @@ For plotting SpEC runs
 import matplotlib
 import os
 import matplotlib.pyplot as plt
-import numpy
-from parsing import parseRunDirNames
 from specRunClass import datFile, simulation
-import h5py
 import plot_defaults
 
 
 
 runsDirectory = "/home/jeff/work/specRuns"
-runSequenceName = "gam2TOV"
-
-
 startingDirectory = os.getcwd()
 
 ##############################################################################
 # Start analysis
 ##############################################################################
 os.chdir(runsDirectory)
-
-
-#gam2TOV = simulation('gam2TOV')
-#gam2D2 = simulation('gam2D2')
-#gam2D4 = simulation('gam2D4')
-
-simToPlot = simulation('gam2TOV')
-
+runString = 'gam2D4'
+simToPlot = simulation(runString)
 lengths = []
-
+#print runString.split('gam2')[1]
+plt.text(.85,.70,runString.split('gam2')[1])
 ##############################################
 #Density convergence
 ##############################################
@@ -97,7 +86,7 @@ plt.show()
 legendList=[]
 matplotlib.rcParams['figure.subplot.left'] = 0.18
 for i, run in enumerate(simToPlot.listOfRunDicts):
-
+    simToPlot.runData['Constraints/GhCe.dat'][i].removeDuplicateTimesteps()
     if True:
         legendList.append('GrLev = ' + str(run['grLev']) + ',  Gauge = ' + str(run['gauge']))
     #if run['gauge'] == 'full':
@@ -145,7 +134,7 @@ plt.show()
 
 legendList=[]
 for i, run in enumerate(simToPlot.listOfRunDicts):
-    print simToPlot.runData['MinMaxOfSqrtDetg.dat'][i].getCols()
+    #print simToPlot.runData['MinMaxOfSqrtDetg.dat'][i].getCols()
     #0
     #h5py.Dataset().attrs
     if run['grLev'] == 3:
@@ -170,18 +159,18 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
 
     #0
     #h5py.Dataset().attrs
-    print simToPlot.wavesList[i]['rd'].keys()
+    #print simToPlot.wavesList[i]['rd'].keys()
     if run['grLev'] < 5 and run['gauge'] == 'full':
         legendList.append('GrLev=' + str(run['grLev']))
         plt.plot(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,0],
                  simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,1])
         # plt.plot(simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,0],
         #          simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,1])
-
+plt.figtext(.85,.20,runString.split('gam2')[1],size=24)
 lg = plt.legend(legendList)
 lg.draw_frame(False)
 plt.xlabel(r"$time_{(code)}$")
-plt.ylabel(r"$r\Psi_4$ \, $^{l=2}_{m=0}$ \, r="+str(r))
+plt.ylabel(r"$Re[ r\Psi_4 ]^2_2$ \,  r="+str(r))
 plt.show()
 
 
