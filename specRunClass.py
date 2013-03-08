@@ -54,6 +54,7 @@ class simulation(object):
             if 'ringdown' in run:
                 h5dict = self.loadWaves(run['collapse'], run['ringdown'])
             else:
+                print "No ringdown in run"
                 h5dict = self.loadWaves(run['collapse'], run['collapse'])
                 del h5dict['rd']
             self.wavesList.append(h5dict)

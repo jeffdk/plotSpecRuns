@@ -9,18 +9,18 @@ import plot_defaults
 
 
 
-runsDirectory = "/home/jeff/work/specRuns"
+runsDirectory = "/home/jeff/work/specRuns/"
 startingDirectory = os.getcwd()
 
 ##############################################################################
 # Start analysis
 ##############################################################################
 os.chdir(runsDirectory)
-runString = 'gam2D4'
+runString = 'gam2D2'
 simToPlot = simulation(runString)
 lengths = []
 #print runString.split('gam2')[1]
-plt.text(.85,.70,runString.split('gam2')[1])
+plt.text(.9,.70,runString.split('gam2')[1])
 ##############################################
 #Density convergence
 ##############################################
@@ -152,14 +152,14 @@ plt.show()
 ##############################################
 # Waves
 ##############################################
-r = 100
+r = 222
 matplotlib.rcParams['figure.subplot.left'] = 0.2
 legendList=[]
 for i, run in enumerate(simToPlot.listOfRunDicts):
 
     #0
     #h5py.Dataset().attrs
-    #print simToPlot.wavesList[i]['rd'].keys()
+    print simToPlot.wavesList[i]['rd'].keys()
     if run['grLev'] < 5 and run['gauge'] == 'full':
         legendList.append('GrLev=' + str(run['grLev']))
         plt.plot(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,0],
@@ -172,6 +172,30 @@ lg.draw_frame(False)
 plt.xlabel(r"$time_{(code)}$")
 plt.ylabel(r"$Re[ r\Psi_4 ]^2_2$ \,  r="+str(r))
 plt.show()
+
+##############################################
+# Waves -convergence with resolution
+##############################################
+r = 222
+matplotlib.rcParams['figure.subplot.left'] = 0.2
+legendList=[]
+for i, run in enumerate(simToPlot.listOfRunDicts):
+    print "LENGHT, ", len(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,1])
+    print simToPlot.wavesList[i]['rd'].keys()
+    if run['grLev'] > 2 and run['gauge'] == 'full':
+        legendList.append('GrLev' + str(run['grLev']) + " - " +str(simToPlot.listOfRunDicts[i-1]['grLev']))
+        plt.plot(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:733,0],
+                 abs(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:733,1]
+                 -simToPlot.wavesList[i-1]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:733,1]))
+        # plt.plot(simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,0],
+        #          simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,1])
+plt.figtext(.85,.20,runString.split('gam2')[1],size=24)
+lg = plt.legend(legendList)
+lg.draw_frame(False)
+plt.xlabel(r"$time_{(code)}$")
+plt.ylabel(r"$Re[ r\Psi_4 ]^2_2$ \,  r="+str(r))
+plt.show()
+
 
 
 
