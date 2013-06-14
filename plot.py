@@ -16,11 +16,11 @@ startingDirectory = os.getcwd()
 # Start analysis
 ##############################################################################
 os.chdir(runsDirectory)
-runString = 'gam2D2'
+runString = 'd2'
 simToPlot = simulation(runString)
 lengths = []
 #print runString.split('gam2')[1]
-plt.text(.9,.70,runString.split('gam2')[1])
+#plt.text(.9,.70,runString.split('gam2')[1])
 ##############################################
 #Density convergence
 ##############################################
@@ -75,7 +75,7 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
 
 lg = plt.legend(legendList, loc=1)
 lg.draw_frame(False)
-plt.xlabel(r"$time_{(code)}$")
+plt.xlabel(r"$t \,\,\, \mathrm{[code]}$")
 plt.ylabel(r"min( $\alpha$ )")
 plt.show()
 
@@ -100,7 +100,8 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
 lg = plt.legend(legendList, loc=2)
 lg.draw_frame(False)
 
-plt.xlabel(r"$time_{(code)}$")
+#plt.xlabel(r"$time_{(code)}$")
+plt.xlabel(r"$t \,\,\, \mathrm{[code]}$")
 plt.ylabel(r"$L_2$ norm of GhCe")
 plt.show()
 
@@ -122,8 +123,8 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
 lg = plt.legend(legendList, loc=2)
 lg.draw_frame(False)
 
-plt.xlabel(r"$time_{(code)}$")
-plt.ylabel(r"max $\rho_{b,\,(code)}$ ")
+plt.xlabel(r"$t \,\,\, \mathrm{[code]}$")
+plt.ylabel(r"max( $\rho_\mathrm{b}$ ) $\,\,\, \mathrm{[code]}$ ")
 plt.show()
 
 
@@ -144,8 +145,9 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
 
 lg = plt.legend(legendList, loc=2)
 lg.draw_frame(False)
-plt.xlabel(r"$time_{(code)}$")
-plt.ylabel(r"max($\sqrt{g})$")
+
+plt.xlabel(r"$t \,\,\, \mathrm{[code]}$")
+plt.ylabel(r"max( $\sqrt{g}\,$  )")
 plt.show()
 
 
