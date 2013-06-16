@@ -58,6 +58,7 @@ def locateRunPortions(runDict):
 
     for segment in segments:
         if 'Ringdown' in segment:
+            #continue
             runDirectory = glob.glob(segment + '/Lev?/Run/')
             assert runDirectory, "No run directory found in Ringdown"
             assert len(runDirectory) < 2, "More than one run directory found in Ringdown!"

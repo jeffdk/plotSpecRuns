@@ -12,11 +12,25 @@ import plot_defaults
 runsDirectory = "/home/jeff/work/specRuns/"
 startingDirectory = os.getcwd()
 
+exRadForPlot = {'tovFull': 228,
+                'd2': 222,
+                'd4': 228,
+                'a3like': 260}
+
+stopIndex = {'tovFull': 773,
+             'd2': 370,
+             'd4': 29,
+             'a3like': 10}
+
+modelLabel = {'tovFull': 'D0',
+              'd2': 'D2',
+              'd4': 'D4',
+              'a3like': 'H3'}
 ##############################################################################
 # Start analysis
 ##############################################################################
 os.chdir(runsDirectory)
-runString = 'd2'
+runString = 'a3like'
 simToPlot = simulation(runString)
 lengths = []
 #print runString.split('gam2')[1]
@@ -75,6 +89,7 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
 
 lg = plt.legend(legendList, loc=1)
 lg.draw_frame(False)
+plt.figtext(.85, .30, modelLabel[runString], size=24)
 plt.xlabel(r"$t \,\,\, \mathrm{[code]}$")
 plt.ylabel(r"min( $\alpha$ )")
 plt.show()
@@ -99,7 +114,7 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
 
 lg = plt.legend(legendList, loc=2)
 lg.draw_frame(False)
-
+plt.figtext(.85, .30, modelLabel[runString], size=24)
 #plt.xlabel(r"$time_{(code)}$")
 plt.xlabel(r"$t \,\,\, \mathrm{[code]}$")
 plt.ylabel(r"$L_2$ norm of GhCe")
@@ -122,7 +137,7 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
 
 lg = plt.legend(legendList, loc=2)
 lg.draw_frame(False)
-
+plt.figtext(.85, .30, modelLabel[runString], size=24)
 plt.xlabel(r"$t \,\,\, \mathrm{[code]}$")
 plt.ylabel(r"max( $\rho_\mathrm{b}$ ) $\,\,\, \mathrm{[code]}$ ")
 plt.show()
@@ -145,7 +160,7 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
 
 lg = plt.legend(legendList, loc=2)
 lg.draw_frame(False)
-
+plt.figtext(.85, .30, modelLabel[runString], size=24)
 plt.xlabel(r"$t \,\,\, \mathrm{[code]}$")
 plt.ylabel(r"max( $\sqrt{g}\,$  )")
 plt.show()
@@ -154,21 +169,23 @@ plt.show()
 ##############################################
 # Waves
 ##############################################
-r = 222
+r = exRadForPlot[runString]
 matplotlib.rcParams['figure.subplot.left'] = 0.2
 legendList=[]
 for i, run in enumerate(simToPlot.listOfRunDicts):
 
     #0
     #h5py.Dataset().attrs
+    if not  'rd' in simToPlot.wavesList[i]:
+        continue
     print simToPlot.wavesList[i]['rd'].keys()
-    if run['grLev'] < 5 and run['gauge'] == 'full':
+    if run['grLev'] < 6 and run['gauge'] == 'full':
         legendList.append('GrLev=' + str(run['grLev']))
         plt.plot(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,0],
                  simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,1])
         # plt.plot(simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,0],
         #          simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,1])
-plt.figtext(.85,.20,runString.split('gam2')[1],size=24)
+plt.figtext(.85, .30, modelLabel[runString], size=24)
 lg = plt.legend(legendList)
 lg.draw_frame(False)
 plt.xlabel(r"$time_{(code)}$")
@@ -178,20 +195,24 @@ plt.show()
 ##############################################
 # Waves -convergence with resolution
 ##############################################
-r = 222
+r = exRadForPlot[runString]
 matplotlib.rcParams['figure.subplot.left'] = 0.2
 legendList=[]
+badLevNum = 2
 for i, run in enumerate(simToPlot.listOfRunDicts):
+    if not  'rd' in simToPlot.wavesList[i]:
+        badLevNum = run['grLev'] + 2
+        continue
     print "LENGHT, ", len(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,1])
     print simToPlot.wavesList[i]['rd'].keys()
-    if run['grLev'] > 2 and run['gauge'] == 'full':
+    if run['grLev'] > badLevNum and run['gauge'] == 'full':
         legendList.append('GrLev' + str(run['grLev']) + " - " +str(simToPlot.listOfRunDicts[i-1]['grLev']))
-        plt.plot(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:733,0],
-                 abs(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:733,1]
-                 -simToPlot.wavesList[i-1]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:733,1]))
+        plt.plot(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:stopIndex[runString], 0],
+                 abs(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:stopIndex[runString], 1]
+                 -simToPlot.wavesList[i-1]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:stopIndex[runString], 1]))
         # plt.plot(simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,0],
         #          simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,1])
-plt.figtext(.85,.20,runString.split('gam2')[1],size=24)
+plt.figtext(.85, .30, modelLabel[runString], size=24)
 lg = plt.legend(legendList)
 lg.draw_frame(False)
 plt.xlabel(r"$time_{(code)}$")
