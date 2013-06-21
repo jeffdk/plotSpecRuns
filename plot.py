@@ -18,9 +18,9 @@ exRadForPlot = {'tovFull': 228,
                 'a3like': 260}
 
 stopIndex = {'tovFull': 773,
-             'd2': 370,
-             'd4': 29,
-             'a3like': 10}
+             'd2': 700,
+             'd4': 700,
+             'a3like': 100}
 
 modelLabel = {'tovFull': 'D0',
               'd2': 'D2',
@@ -99,7 +99,8 @@ plt.show()
 ###############################################
 
 legendList=[]
-matplotlib.rcParams['figure.subplot.left'] = 0.18
+matplotlib.rcParams['figure.subplot.left'] = 0.15
+matplotlib.rcParams['figure.subplot.bottom'] = 0.15
 for i, run in enumerate(simToPlot.listOfRunDicts):
     simToPlot.runData['Constraints/GhCe.dat'][i].removeDuplicateTimesteps()
     if True:
@@ -112,12 +113,15 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
                  simToPlot.runData['Constraints/GhCe.dat'][i]['VolLp(GhCe)']
                  / simToPlot.runData['Constraints/GhCe.dat'][i]['VolLp(GhCeDenom)'])
 
-lg = plt.legend(legendList, loc=2)
+if runString == 'a3like':
+    lg = plt.legend(legendList, loc=2)
+else:
+    lg = plt.legend(legendList, loc=1)
 lg.draw_frame(False)
-plt.figtext(.85, .30, modelLabel[runString], size=24)
+plt.figtext(.85, .65, modelLabel[runString], size=24)
 #plt.xlabel(r"$time_{(code)}$")
-plt.xlabel(r"$t \,\,\, \mathrm{[code]}$")
-plt.ylabel(r"$L_2$ norm of GhCe")
+plt.xlabel(r"$t \,\,\, \mathrm{[code]}$", labelpad=10)
+plt.ylabel(r"$L_2$ norm of GhCe", labelpad=10)
 plt.show()
 
 
@@ -130,7 +134,7 @@ legendList=[]
 matplotlib.rcParams['figure.subplot.left'] = 0.18
 for i, run in enumerate(simToPlot.listOfRunDicts):
 
-    if run['grLev'] == 3:
+    if run['grLev'] == 4:
         legendList.append('Gauge = ' + str(run['gauge']))
         plt.semilogy(simToPlot.runData['DensestPoint.dat'][i]['time'],
                  simToPlot.runData['DensestPoint.dat'][i]['Rho0Phys'])
@@ -170,7 +174,12 @@ plt.show()
 # Waves
 ##############################################
 r = exRadForPlot[runString]
-matplotlib.rcParams['figure.subplot.left'] = 0.2
+matplotlib.rcParams['figure.subplot.left'] = 0.15
+if runString == "tovFull":
+    matplotlib.rcParams['figure.subplot.left'] = 0.18
+#if runString == "a3like":
+
+matplotlib.rcParams['figure.subplot.bottom'] = 0.15
 legendList=[]
 for i, run in enumerate(simToPlot.listOfRunDicts):
 
@@ -182,14 +191,15 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
     if run['grLev'] < 6 and run['gauge'] == 'full':
         legendList.append('GrLev=' + str(run['grLev']))
         plt.plot(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,0],
-                 simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,1])
+                 simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:,1]*1e5)
         # plt.plot(simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,0],
         #          simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,1])
 plt.figtext(.85, .30, modelLabel[runString], size=24)
 lg = plt.legend(legendList)
 lg.draw_frame(False)
-plt.xlabel(r"$time_{(code)}$")
-plt.ylabel(r"$Re[ r\Psi_4 ]^2_2$ \,  r="+str(r))
+#plt.xlabel(r"$time_{(code)}$")
+plt.xlabel(r"$t \,\,\, \mathrm{[code]}$", labelpad=10)
+plt.ylabel(r"$Re[ r\Psi_4 ]^2_0 \times 10^5$ \,  r="+str(r),  labelpad=11)
 plt.show()
 
 ##############################################
@@ -207,16 +217,17 @@ for i, run in enumerate(simToPlot.listOfRunDicts):
     print simToPlot.wavesList[i]['rd'].keys()
     if run['grLev'] > badLevNum and run['gauge'] == 'full':
         legendList.append('GrLev' + str(run['grLev']) + " - " +str(simToPlot.listOfRunDicts[i-1]['grLev']))
-        plt.plot(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:stopIndex[runString], 0],
+        plt.semilogy(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:stopIndex[runString], 0],
                  abs(simToPlot.wavesList[i]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:stopIndex[runString], 1]
                  -simToPlot.wavesList[i-1]['rd']['R0'+str(r)+'.dir']['Y_l2_m0.dat'][:stopIndex[runString], 1]))
         # plt.plot(simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,0],
         #          simToPlot.wavesList[i]['rd']['R0063.dir']['Y_l2_m2.dat'][:,1])
-plt.figtext(.85, .30, modelLabel[runString], size=24)
+plt.figtext(.85, .65, modelLabel[runString], size=24)
 lg = plt.legend(legendList)
 lg.draw_frame(False)
-plt.xlabel(r"$time_{(code)}$")
-plt.ylabel(r"$Re[ r\Psi_4 ]^2_2$ \,  r="+str(r))
+#plt.xlabel(r"$time_{(code)}$")
+plt.xlabel(r"$t \,\,\, \mathrm{[code]}$")
+plt.ylabel(r"$\Delta Re[ r\Psi_4 ]^2_0$ \,  r="+str(r))
 plt.show()
 
 

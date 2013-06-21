@@ -20,11 +20,11 @@ runString = 'tov-'
 simToPlot = simulation(runString)
 lengths = []
 
-ahFound = {'froze': 0,
+ahFound = {'shift': 1,
+           'full': 1,
            'harm': 0,
-           'shift': 1,
            'slice': 1,
-           'full': 1}
+           'froze': 0}
 colors = ['b','g','r','c','m']
 ##############################################
 # Constraints
